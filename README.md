@@ -1,3 +1,4 @@
 # Kiddyo
 VideoPlayer 4 kids
-etib
+
+Light vlc gui using pygame
