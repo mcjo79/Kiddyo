@@ -20,3 +20,18 @@ PARENTS
 - Pouvoir choisir l'icone/image de la playlist
 - Pouvoir choisir le nom de la playlist
 - Pouvoir ajouter ou enlever des vidéos de la playlist
+
+__________________________________________________________________________________________________
+
+BOUTONS
+- Play/Pause/Validation
+- Stop/Back
+- Next
+- Previous
+- Volume up
+- Volume down
+
+FONCTIONS
+- Resume
+- Restart
+- Haut/Bas/Gauche/Droite
