@@ -1,16 +1,31 @@
 <data>
-    <playlist name="Les Barbapapa" image="barbapapa.jpg"/>
-    <playlist name="Dany le tigre" image="dany.jpg"/>
-    <playlist name="Dora la pouffe" image="dora.jpg"/>
-    <playlist name="KaiLan" image="kailan.jpg"/>
-    <playlist name="Masha et Miska" image="masha.jpg"/>
-    <playlist name="Le village Mickey" image="mikey.jpg"/>
-    <playlist name="Maya L'abeille" image="maya.jpg"/>
-    <playlist name="Miraculus" image="miraculous.jpg"/>
-    <playlist name="La Pat patrouille" image="pawpatrol.jpg"/>
-    <playlist name="Pocoyo" image="pocoyo.jpg"/>
-    <playlist name="Simon casse trop les bonbons" image="simon.jpg"/>
-    <playlist name="T'choupi" image="tchoupi.jpg"/>
-    <playlist name="L'Ane Trotro" image="trotro.jpg"/>
-    <playlist name="Zack &amp; Quack" image="zack&amp;quack.jpg"/>
+    <playlist name="Les Barbapapa" image="barbapapa.jpg" folder="f:/video/barbapapa">
+        <video name="Barbapapa 1" image="barbapapa.jpg" file="s3e1.mp4" />
+        <video name="Barbapapa 2" image="barbapapa.jpg" file="s3e2.mp4"  />
+        <video name="Barbapapa 3" image="barbapapa.jpg" file="s3e1.mp4"  />
+        <video name="Barbapapa 4" image="barbapapa.jpg" file="s3e2.mp4"  />
+    </playlist>
+    <playlist name="Dany le tigre" image="dany.jpg" folder="f:/video/dany"/>
+    <playlist name="Dora la pouffe" image="dora.jpg" folder="f:/video/dora">
+        <video name="Dora 1" image="dora.jpg" file="s3e1.mp4" />
+        <video name="Dora 2" image="dora.jpg" file="s3e2.mp4"  />
+        <video name="Dora 3" image="dora.jpg" file="s3e1.mp4"  />
+        <video name="Dora 4" image="dora.jpg" file="s3e2.mp4"  />
+    </playlist>
+    <playlist name="KaiLan" image="kailan.jpg" folder="f:/video/KaiLan"/>
+    <playlist name="Masha et Miska" image="masha.jpg" folder="f:/video/MashaEtMiska"/>
+    <playlist name="Le village Mickey" image="mikey.jpg" folder="f:/video/LeVillageDeDany"/>
+    <playlist name="Maya L'abeille" image="maya.jpg" folder="f:/video/Maya"/>
+    <playlist name="Miraculus" image="miraculous.jpg" folder="f:/video/Miraculus"/>
+    <playlist name="La Pat patrouille" image="pawpatrol.jpg" folder="f:/video/PatPatrouille"/>
+    <playlist name="Pocoyo" image="pocoyo.jpg" folder="f:/video/Pocoyo"/>
+    <playlist name="Simon casse trop les bonbons" image="simon.jpg" folder="f:/video/simon"/>
+    <playlist name="T'choupi" image="tchoupi.jpg" folder="f:/video/Tchoupi">
+        <video name="T'choupi 1" image="tchoupi.jpg" file="s3e1.mp4" />
+        <video name="T'choupi 2" image="masha.jpg" file="s3e2.mp4"  />
+        <video name="T'choupi 3" image="miraculous.jpg" file="s3e1.mp4"  />
+        <video name="T'choupi 4" image="pocoyo.jpg" file="s3e2.mp4"  />
+    </playlist>
+    <playlist name="L'Ane Trotro" image="trotro.jpg" folder="f:/video/Trotro"/>
+    <playlist name="Zack &amp; Quack" image="zack&amp;quack.jpg" folder="f:/video/barbapapa"/>
 </data>
