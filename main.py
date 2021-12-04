@@ -51,7 +51,7 @@ while 1:
         if event.type == pygame.QUIT:
             print("quit")
             sys.exit()
-        if event.type == pygame.KEYDOWN:
+        if event.type == pygame.KEYUP:
             if myMenuPL == None:
                 if event.key == pygame.K_RETURN:
                     print(myMenu.currPos().name)
@@ -103,6 +103,14 @@ while 1:
                         None
                     listImages = createListImage(myMenuPL)
             else:
+                if event.key == pygame.K_DOWN:
+                    movie = None
+                    player.stop()
+                    currVideo = myMenuPL.nextPos()
+                if event.key == pygame.K_UP:
+                    movie = None
+                    player.stop()
+                    currVideo = myMenuPL.prevPos()
                 if event.key == pygame.K_q:
                     currVideo = None
                     movie = None
@@ -152,6 +160,7 @@ while 1:
         screen.blit(img1, (412, 440))
     else:
         if (movie == None) :
+            pygame.draw.rect(screen, (0,0,0), pygame.Rect(0, 0, width, height))
             movie = os.path.expanduser(myMenuPL.currPos().file)
             if not os.access(movie, os.R_OK):
                 print('Error: %s file not readable' % movie)
@@ -166,7 +175,7 @@ while 1:
                 continue
             media = vlcInstance.media_new(movie)
             win_id = pygame.display.get_wm_info()['window']
-            if sys.platform == "linux2":
+            if sys.platform == "linux":
                 player.set_xwindow(win_id)
             elif sys.platform == "win32":
                 player.set_hwnd(win_id)
@@ -178,6 +187,6 @@ while 1:
         else:
             if player.get_state() == vlc.State.Ended:
                 currVideo = myMenuPL.nextPos()
-                movie == None
+                movie = None
     pygame.display.flip()
 
