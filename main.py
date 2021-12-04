@@ -3,8 +3,27 @@ import os, sys, pygame, vlc
 from typing import Any
 import menu as MN
 import menupl as MNPL
+import configparser
+from tools import ToolsKey
+
+
+m = None
+if sys.platform == "linux":
+    import alsaaudio
+    m = alsaaudio.Mixer()
 from PIL import Image, ImageFilter
 
+configFilePath = os.path.join(os.path.dirname(__file__), 'config.cfg')
+config = configparser.ConfigParser()
+config.read(configFilePath)
+
+quitKeys = ToolsKey.getKeys(config['setup']['exit'])
+upKeys = ToolsKey.getKeys(config['setup']['up'])
+downKeys = ToolsKey.getKeys(config['setup']['down'])
+stopKeys = ToolsKey.getKeys(config['setup']['stop'])
+playKeys = ToolsKey.getKeys(config['setup']['play'])
+soundplusKeys = ToolsKey.getKeys(config['setup']['soundplus'])
+soundminusKeys = ToolsKey.getKeys(config['setup']['soundminus'])
 
 def createListImage(menu):
     listImages = []
@@ -15,6 +34,9 @@ def createListImage(menu):
             listImages.append([None,  playlist.name])
             continue
     return listImages
+
+
+
 
 myMenu = MN.Menu("playlist.xml")
 myMenuPL = None
@@ -50,30 +72,70 @@ font1 = pygame.font.SysFont(None, 31)
 move = 0
 rect = Any
 
+vlc_onload = False
+vlc_onstop = False
+waitTime = 0
 while 1:
+    if vlc_onstop == True and player.get_state() != vlc.State.Stopped:
+        continue
+    if waitTime > 0:
+        waitTime = waitTime - 1
+        continue
+    if player.get_state() == vlc.State.Opening:
+        continue
+    if vlc_onload :
+        continue
+    
+    if vlc_onstop == True and player.get_state() == vlc.State.Stopped:
+        vlc_onstop = False
+        continue
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            print("quit")
             sys.exit()
         if event.type == pygame.KEYUP:
+            if event.key in quitKeys:
+                sys.exit()
+            if event.key in soundplusKeys:
+                if sys.platform == "linux":
+                    if m.getvolume()[0] < 100:
+                        volume = m.getvolume()[0] + 10
+                        if volume > 100:
+                            volume = 100
+                        m.setvolume(volume)
+                else :
+                    volume = player.audio_get_volume() + 10
+                    if volume > 100: 
+                        volume = 100
+                    player.audio_set_volume(volume)
+
+
+            if event.key in soundminusKeys:
+                if sys.platform == "linux":
+                    if m.getvolume()[0] > 0:
+                        volume = m.getvolume()[0] - 10
+                        if volume < 0:
+                            volume = 0
+                        m.setvolume(volume)
+                else:
+                    volume = player.audio_get_volume() - 10
+                    if volume < 0: 
+                        volume = 0
+                    player.audio_set_volume(volume)
+
             if myMenuPL == None:
-                if event.key == pygame.K_RETURN:
-                    print(myMenu.currPos().name)
+                if event.key in playKeys:
                     myMenuPL = None
                     if len(myMenu.currPos().videos) > 0:
                         myMenuPL = MNPL.MenuPL(myMenu.currPos().videos)
                         listImages = createListImage(myMenuPL)
-                if event.key == pygame.K_q:
-                    print("quit")
-                    sys.exit()
-                if event.key == pygame.K_DOWN:
+                if event.key in downKeys:
                     try : 
                         pilImage = Image.open(myMenu.nextPos().image).filter(ImageFilter.GaussianBlur(radius=32))
                         drawedImage = pygame.transform.scale( pygame.image.fromstring(pilImage.tobytes(), pilImage.size, pilImage.mode  ), (width, height))
                     except FileNotFoundError:
                         None
                     listImages = createListImage(myMenu)
-                if event.key == pygame.K_UP:
+                if event.key in upKeys:
                     try : 
                         pilImage = Image.open(myMenu.prevPos().image).filter(ImageFilter.GaussianBlur(radius=32))
                         drawedImage = pygame.transform.scale( pygame.image.fromstring(pilImage.tobytes(), pilImage.size, pilImage.mode  ), (width, height))
@@ -81,10 +143,10 @@ while 1:
                         None
                     listImages = createListImage(myMenu)
             elif currVideo == None:
-                if event.key == pygame.K_RETURN:
+                if event.key in playKeys:
                     movie = None
                     currVideo = myMenuPL.currPos()
-                if event.key == pygame.K_q:
+                if event.key in stopKeys:
                     myMenuPL = None
                     try : 
                         pilImage = Image.open(myMenu.currPos().image).filter(ImageFilter.GaussianBlur(radius=32))
@@ -92,14 +154,14 @@ while 1:
                     except FileNotFoundError:
                         None
                     listImages = createListImage(myMenu)
-                if event.key == pygame.K_DOWN:
+                if event.key in downKeys:
                     try : 
                         pilImage = Image.open(myMenuPL.nextPos().image).filter(ImageFilter.GaussianBlur(radius=32))
                         drawedImage = pygame.transform.scale( pygame.image.fromstring(pilImage.tobytes(), pilImage.size, pilImage.mode  ), (width, height))
                     except FileNotFoundError:
                         None
                     listImages = createListImage(myMenuPL)
-                if event.key == pygame.K_UP:
+                if event.key in upKeys:
                     try : 
                         pilImage = Image.open(myMenuPL.prevPos().image).filter(ImageFilter.GaussianBlur(radius=32))
                         drawedImage = pygame.transform.scale( pygame.image.fromstring(pilImage.tobytes(), pilImage.size, pilImage.mode  ), (width, height))
@@ -107,24 +169,38 @@ while 1:
                         None
                     listImages = createListImage(myMenuPL)
             else:
-                if event.key == pygame.K_DOWN:
+                if event.key in playKeys:
+                    if player.get_state() == vlc.State.Paused:
+                        player.play()
+                    if player.get_state() == vlc.State.Playing:
+                        player.pause()
+                    continue
+                if event.key in downKeys:
                     movie = None
                     player.stop()
+                    vlc_onstop = True
                     currVideo = myMenuPL.nextPos()
-                if event.key == pygame.K_UP:
-                    movie = None
+                    waitTime = 500
+                    continue
+                if event.key in upKeys:
                     player.stop()
+                    vlc_onstop = True
+                    movie = None
                     currVideo = myMenuPL.prevPos()
-                if event.key == pygame.K_q:
+                    waitTime = 500
+                    continue
+                if event.key in stopKeys:
+                    player.stop()
                     currVideo = None
                     movie = None
-                    player.stop()
+                    waitTime = 500
                     try : 
                         pilImage = Image.open(myMenuPL.currPos().image).filter(ImageFilter.GaussianBlur(radius=32))
                         drawedImage = pygame.transform.scale( pygame.image.fromstring(pilImage.tobytes(), pilImage.size, pilImage.mode  ), (width, height))
                     except FileNotFoundError:
                         None
                     listImages = createListImage(myMenuPL)
+                    continue
     if myMenuPL == None:
         screen.blit(drawedImage, (0, 0))
         x, y = 50, 20
@@ -162,10 +238,11 @@ while 1:
         if img3 != None : 
             screen.blit(img3, (412, 108))
         screen.blit(img1, (412, 440))
-    else:
+    elif vlc_onstop == False:
         if (movie == None) :
-            pygame.draw.rect(screen, (0,0,0), pygame.Rect(0, 0, width, height))
+            vlc_onload = True
             movie = os.path.expanduser(myMenuPL.currPos().file)
+            pygame.draw.rect(screen, (0,0,0), pygame.Rect(0, 0, width, height))
             if not os.access(movie, os.R_OK):
                 print('Error: %s file not readable' % movie)
                 currVideo = None
@@ -188,8 +265,10 @@ while 1:
             player.set_media(media)
             pygame.mixer.quit()
             player.play()
+            waitTime = 500
+            vlc_onload = False
         else:
-            if player.get_state() == vlc.State.Ended:
+            if player.get_state() == vlc.State.Ended and vlc_onload == False:
                 currVideo = myMenuPL.nextPos()
                 movie = None
     pygame.display.flip()

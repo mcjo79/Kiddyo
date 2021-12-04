@@ -18,13 +18,11 @@ class Menu:
         id = 0
         for child in root:
             pl = PL.PlayList(str(uuid.uuid4()), child.attrib["name"], "images/" + child.attrib["image"], child.attrib["folder"])
-            print(json.dumps(pl.__dict__))
             vId = 0
             for subchild in child:
                 vd = VD.Video(str(uuid.uuid4()),  subchild.attrib["name"], "images/" + subchild.attrib["image"], child.attrib["folder"] +"/" + subchild.attrib["file"])
                 pl.addVideo(vd)
                 vId = vId + 1
-                print(json.dumps(vd.__dict__))
             self.playlists.append(pl)
             id = id + 1
             
