@@ -20,8 +20,12 @@ myMenu = MN.Menu("playlist.xml")
 myMenuPL = None
 currVideo = None
 movie = None
+vlcInstance = None
+if sys.platform == "linux":
+    vlcInstance = vlc.Instance('--no-xlib -q > /dev/null 2>&1')
+else:
+    vlcInstance = vlc.Instance('-q')
 
-vlcInstance = vlc.Instance()
 player = vlcInstance.media_player_new()
 em = player.event_manager()
 pygame.init()
